@@ -4,8 +4,12 @@
 # set trigger on push event
 name: nodejs
 on:
-  push:
-    branches: [ "master" ]
+  pull_request:
+    branches:
+     - master
+    types:
+      - opened
+      - synchronize
     
   # add the ability to run the script in manual mode
   workflow_dispatch:
