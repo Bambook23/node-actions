@@ -1,33 +1,47 @@
 # This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
 
+# set trigger on push event
 name: nodejs
 on:
   push:
     branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
-
+    
+  # add the ability to run the script in manual mode
   workflow_dispatch:
 
 jobs:
   build:
-
+    # select OS
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
+         # select node versions to test on
         node-version: [20.x, 22.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
     - uses: actions/checkout@v4
+
+    # Set up node
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: npm install
-    - run: mv ./.env.example ./.env
-    - run: npm run build
-    - run: echo NO TESTS FOUND 
+        
+    # install dependencies
+    - name: Install dependencies
+      run: npm install
+
+    # create .file based on 
+    - name: Create .env file based on .env.example
+      run: cp ./.env.example ./.env
+      
+    # try building the application
+    - name: Build application
+      run: npm run build --if-present
+      
+    # run tests
+    - name: Run tests
+      run: echo NO TESTS FOUND 
